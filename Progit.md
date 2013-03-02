@@ -122,4 +122,36 @@ Progit Notes
 
 	$ git commit -a 
 
-### 
+### 移除文件 ###
+
+1. 工作目录先删除一个文件，提交这一变化至Git仓库，流程跟添加一个
+新文件是一致的。
+
+		$ rm README
+		$ git rm README
+		$ git commit -m 'git rm example'
+
+2. 直接`git rm`删除，此时删除了目录里的文件并且这一变化进入了暂存区，
+等待提交。
+		
+		$ git rm README
+		$ git commit -m 'another git rm example'
+
+3. 如果一个文件已修改并且已暂存，要把其从暂存区以及工作目录里删除：
+
+		$ git rm -f README
+
+4. 如果一个文件已修改并且已暂存，要把其仅仅从暂存区删除，目录上的不动：
+
+		$ git rm --cached README
+
+5. 如果一个文件已在Git仓库里被跟踪且未修改，上一条命令仅仅将其解除跟踪。
+   因此`git rm`跟`git add`一样，当对象状态不同时有不同的作用。
+
+		$ git rm --cached README
+		$ git commit 
+
+6. `git rm`不能删除一个虽在目录里但未跟踪的文件。
+
+### 移动文件 ###
+
