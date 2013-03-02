@@ -134,27 +134,28 @@ Progit Notes
 
 		$ rm README		#删除目录上的文件(对应目录内创建新文件)
 		$ git rm README		#解除跟踪(对应`git add`的添加跟踪)
-		$ git commit -m 'git rm example' 	#提交“解除跟踪”
+		$ git commit  	#提交“解除跟踪”
 
-2. 如果一个新跟踪文件，要把其从暂存区以及工作目录里删除：
+2. 如果一个新跟踪文件，`git rm README`:
 
-		$ git rm -f README #仅仅解除跟踪
-
-3. 如果一个新跟踪文件，要把其仅仅从暂存区删除，目录上的不动：
-
-		$ git rm --cached README #解除跟踪并删除
-
-4. 如果一个文件已在Git仓库里被跟踪且未修改:
+	>error: README has changes staged in the index  
+	>(use --cached to keep the file, or -f to force removal)
 
 		$ git rm --cached README
-		$ git commit 
+		
+		$ git rm -f README
+
+3. 如果一个文件已在Git仓库里被跟踪且未修改:
 
 		$ git rm README
+		$ git commit 
+
+		$ git rm --cached README
 		$ git commit
 
-5. 如果一个文件已在Git仓库里被跟踪，已修改但未暂存，`git rm README`：
+4. 如果一个文件已在Git仓库里被跟踪，已修改但未暂存，`git rm README`：
 	
-	>error: README has local modifications,  
+	>error: README has local modifications  
 	>(use --cached to keep the file, or -f to force removal)
 
 		$ git rm --cached README
@@ -163,7 +164,7 @@ Progit Notes
 		$ git rm -f README
 		$ git commit
 
-6. 如果一个文件已在Git仓库里被跟踪，已修改也已暂存，`git rm README`:
+5. 如果一个文件已在Git仓库里被跟踪，已修改也已暂存，`git rm README`:
 
 	>error: README has changes staged in the index  
 	>(use --cached to keep the file, or -f to force removal)
