@@ -108,6 +108,11 @@ Progit Notes
 查看哪些更新还没有暂存。
 
 	$ git diff --staged
+
+或者
+	
+	$ git diff --cached
+
 查看哪些更新已经暂存起来等待下次提交。
 
 ### 提交更新：###
@@ -127,31 +132,47 @@ Progit Notes
 1. 工作目录先删除一个文件，提交这一变化至Git仓库，流程跟添加一个
 新文件是一致的。
 
-		$ rm README
-		$ git rm README
-		$ git commit -m 'git rm example'
+		$ rm README		#删除目录上的文件(对应目录内创建新文件)
+		$ git rm README		#解除跟踪(对应`git add`的添加跟踪)
+		$ git commit -m 'git rm example' 	#提交“解除跟踪”
 
-2. 直接`git rm`删除，此时删除了目录里的文件并且这一变化进入了暂存区，
-等待提交。
-		
-		$ git rm README
-		$ git commit -m 'another git rm example'
+2. 如果一个新跟踪文件，要把其从暂存区以及工作目录里删除：
 
-3. 如果一个文件已修改并且已暂存，要把其从暂存区以及工作目录里删除：
+		$ git rm -f README #仅仅解除跟踪
 
-		$ git rm -f README
+3. 如果一个新跟踪文件，要把其仅仅从暂存区删除，目录上的不动：
 
-4. 如果一个文件已修改并且已暂存，要把其仅仅从暂存区删除，目录上的不动：
+		$ git rm --cached README #解除跟踪并删除
 
-		$ git rm --cached README
-
-5. 如果一个文件已在Git仓库里被跟踪且未修改，上一条命令仅仅将其解除跟踪。
-   因此`git rm`跟`git add`一样，当对象状态不同时有不同的作用。
+4. 如果一个文件已在Git仓库里被跟踪且未修改:
 
 		$ git rm --cached README
 		$ git commit 
 
-6. `git rm`不能删除一个虽在目录里但未跟踪的文件。
+		$ git rm README
+		$ git commit
+
+5. 如果一个文件已在Git仓库里被跟踪，已修改但未暂存，`git rm README`：
+	
+	>error: README has local modifications,  
+	>(use --cached to keep the file, or -f to force removal)
+
+		$ git rm --cached README
+		$ git commit
+
+		$ git rm -f README
+		$ git commit
+
+6. 如果一个文件已在Git仓库里被跟踪，已修改也已暂存，`git rm README`:
+
+	>error: README has changes staged in the index  
+	>(use --cached to keep the file, or -f to force removal)
+
+		$ git rm --cached README
+		$ git commit
+
+		$ git rm -f README
+		$ git commit
 
 ### 移动文件 ###
 
