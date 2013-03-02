@@ -177,3 +177,16 @@ Progit Notes
 
 ### 移动文件 ###
 
+给被Git跟踪的某个文件重命名：
+	
+	$ git mv README.txt README
+	$ git commit
+
+实际上相当于运行了下面三个命令：
+	
+	$ mv README.txt README
+	$ git rm README.txt
+	$ git add README
+	$ git commit
+
+### 查看提交历史 ###
