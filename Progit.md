@@ -190,3 +190,44 @@ Progit Notes
 	$ git commit
 
 ### 查看提交历史 ###
+
+	$ git log [arguments]
+
+	$ git log -<n>
+	$ git log --pretty=[arg]
+	$ git log --pretty=format
+	$ git log -p
+	$ git log --author --commiter --all-match
+	$ git log --since="date" --before="date"  --<file>
+
+### 撤销操作 ###
+
+### 修改最近一次提交 ###
+
+	$ git commit --amend
+
+此命令将使用当前的暂存快照提交，并且有机会修改提交说明。
+
+如果上次提交时忘了暂存某些修改，可以先不上暂存操作，然后再`--amend`提交：
+
+	$ git commmit -m 'yet another commit'
+	$ git add forgotten_file
+	$ git commit --amend
+
+### 取消已经暂存的文件 ###
+
+	$ git reset HEAD <file>
+
+### 取消对文件的修改 ###
+
+	$ git checkout -- <file> 
+
+这条命令有些危险，所有对文件test1刚才的修改都没了。如果只是想要回退版本，同时
+保留刚才的修改以便将来继续工作，可以使用下章介绍的stashing和分支来处理。
+
+记住，任何提交到Git的数据，都可以被恢复。可能失去的数据仅限于没有提交果的，
+对Git来说它们就像从未存在过一样。
+
+### 远程仓库的使用 ###
+
+
