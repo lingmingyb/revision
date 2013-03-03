@@ -69,7 +69,7 @@ Progit Notes
 
 或者
 
-	$ git clone git://url/to/.git (mygitrepo)
+	$ git clone git://url/to/.git [mygitrepo_name]
 
 现在我们已经有了一个真实项目的Git仓库，并且从仓库中取出了最新版本
 的文件拷贝。
@@ -282,5 +282,86 @@ Progit Notes
 	$ git remote rm paul
 
 ### 打标签 ###
+
+列显已有的标签：
+
+	$ git tag
+
+新建标签：
+
+Git使用的标签有两种类型：轻量级的(lightweight)和含附注的(annotated). 轻量级
+标签就是个指向某次特定提交的引用(指针);而含附注标签则是储存在仓库中的一个独立对象，
+它有自身的校验和信息，包含着打标签人的名字，电子邮件和打标签日期，以及标签说明，
+标签本身也允许使用GNU Privacy Guard(GPG)来签署和验证。
+
+含附注的标签:
+
+	$ git tag -a v0.1 -m 'my version 0.1'
+
+	$ git show v0.1
+
+	$ git tag -s v0.2 -m 'my signed version 0.2'
+
+轻量级标签：
+
+	$ git tag v0.1-lw
+	$ git show v0.1-lw
+
+验证标签：
+
+	$ git tag -v [tag-name]
+
+此命令会条用GPG来验证签名，所以你需要有签署者的公钥，存放在keyring中才能验证。
+
+后期加注标签：
+	
+可以在后期对早先的某次提交加注：
+
+	$ git log pretty=oneline
+
+	$ git tag -a v1.2 9fceb02
+
+	$ git tag
+
+	$ git show v1.2
+
+分享标签：
+
+默认情况下，`git push`并不会把标签传送到远程服务器上，只有通过显示命令才能分享
+标签到远端仓库。其命令格式如同推送分支：
+
+	$ git push origin [tag-name]
+
+如果要一次推送所有(本地新增的)标签上去，可以使用`--tags`选项：
+
+	$ git push origin --tags
+
+现在，其他人克隆共享仓库或拉取数据同步后，也会看到这些标签。
+
+### 技巧和窍门 ###
+
+自动补全：
+
+	$ cp git-src/contrib/completion/git-completion.bash ~/.git-completion.bash
+
+	$ echo "source ~/.git-completion.bash" >> ~/.bashrc
+
+或者系统级别启用：
+
+	$ cp git-src/contrib/completion/git-completion.bash /etc/bash_completion.d/
+	
+Git别名：
+
+	$ git config --global alias.co checkout
+	$ git config --global alias.br branch
+	$ git config --global alias.ci commit
+	$ git config --global alias.st status
+	$ git config --global alias.unstage 'reset HEAD --'
+	$ git config --global alias.last 'log -1 HEAD'
+	$ git config --global alias.visual "!gitk"
+
+
+第3章：Git分支
+--------------
 
 
