@@ -843,4 +843,49 @@ push`和`git pull`一开始就能正常工作的原因。当然，也可以设�
 第4章：服务器上的Git
 --------------------
 
+Git远程仓库仅仅是一个纯仓库-- 一个没有当前工作目录的仓库。仓库里仅仅是Git的数据，
+也即项目里`.git`目录里的内容，别无他物。
+
+### 协议 ###
+
+Git使用四种主要的协议来传输数据：本地传输，SSH协议，Git协议和HTTP协议。
+除了HTTP协议以外，其它协议都要求在服务器端安装并运行Git。
+
+**本地协议**
+
+克隆一个本地仓库：
+
+	$ git clone /path/to/project.git
+
+添加一个本地仓库到现有Git工程：
+
+	$ git remote add local_proj /path/to/project.git
+
+然后就可以像在网络上一样向这个远程仓库推送和获取数据了。
+
+** SSH协议**
+
+克隆一个仓库：
+
+	$ git clone ssh://git@github.com:kdlijian/kdlijian.github.com.git
+
+或者不指明某个协议，这是Git会默认使用SSH：
+
+	$ git clone git@github.com:kdlijian/kdlijian.github.com.git
+
+**Git协议**
+
+匿名访问，通常不能用来推送。传输最快。
+
+**HTTP(s)协议**
+
+	$ cd /var/www/htdocs
+	$ git clone --bare /path/to/project/ git-project.git
+	$ cd git-project.git
+	$ cp hooks/post-update.sample hooks/post-update
+	$ chmod a+x hooks/post-update
+
+第5章：分布式Git
+----------------
+
 
