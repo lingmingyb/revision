@@ -581,8 +581,9 @@ Git就无法干净地把两者合到一起。如果你在`new_feature`的开发�
 
 删除掉。未与当前分支合并的分支不可以用`-d`删除：
 
-	> $ git branch -d testing
-	> error: The branch 'testing' is not an ancestor of your current HEAD.
+	$ git branch -d testing
+
+> error: The branch 'testing' is not an ancestor of your current HEAD.
 
 
 ###分支式工作流程###
