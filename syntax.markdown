@@ -22,8 +22,8 @@ Markdown的理念是能够让文档更容易读、写和修改。HTML是一种*�
 
 在Markdown文本内使用HTML标签需要**注意**：  
 
-+   _应用HTML某些区块标签(block-level elements)，比如`<div>, <table>`
-    等标签时，必须在前后加上空行与其他内容隔开_，还要求他们的
++   应用HTML某些区块标签(block-level elements)，比如`<div>, <table>`
+    等标签时，必须在前后加上空行与其他内容隔开，还要求他们的
 	开始标签与结尾标签不能用制表符或空格缩进。
 +   HTML区块标签内的Markdown语法将不会被处理。
     举例如下(`*Foo*`不起作用):
@@ -45,9 +45,9 @@ Markdown的理念是能够让文档更容易读、写和修改。HTML是一种*�
 
 在HTML中，有两个字符需要特殊处理，< 和 &, 如果要显示这两个字符
 的原型，必须要使用实体形式(entities), 分别是`&lt;` 和 `&amp;`
+Markdown会自动处理`<`和`&`的显示。如果`<`或`&`与其后的字符构成具有特殊
 
-Markdown会自动处理<和&的显示。如果<或&与其后的字符构成具有特殊
-意义的HTML标识(如`&amp; &lt; <href>`等)则不予变动;否则就将<和&当作HTML
+意义的HTML标识(如`&amp; &lt; <href>`等)则不予变动;否则就将`<`和`&`当作HTML
 实体而予以自动转换(变成`&amp;`等)。
 
 比如：
@@ -60,7 +60,7 @@ Markdown会自动处理<和&的显示。如果<或&与其后的字符构成具�
 
 **注意**:_Markdown code范围内，不论是区块还是区段(行内), <和&
 两个符号一定都会被转换成HTML实体_，这项特性使得很容易用Markdown
-写HTML code(如果在HTML文档中引用HTML code，需要将所有的<和&进行
+写HTML code(如果在HTML文档中引用HTML code，需要将所有的`<`和&进行
 实体转换(_即code内所见即所得_)。
 
 区块元素(Block-level Elements)
@@ -97,16 +97,13 @@ Markdown支持两种标题(Headers)的写法。
 Markdown的区块引用类似于Email中的`>`引用方式。将所引用段落手动断行
 (hard-wrap)并且在每一行加上`>`效果最好。
 
->这是一个测试。  
->这是同一个段落的第二行。  
->每一行都是手动断行。  
->这是该引用段落的第四行。  
-这行(hard-wrapped)的`>`可以省略。
+>这是一个测试。你可以大胆地手工段行排版，而不用担心引入
+>`<br />`，就像这样。
 
->>区块引用也可以嵌套。  
->>就像这样。  
+>>区块引用也可以嵌套。
+>>就像这样。
 
->OK. It works.(_这一行与上一行内容必须有空行隔开_)  
+>OK. It works.(_这一行与上一行内容必须有空行隔开_)。在这里我们断行，
 >这是效果示例，语法示例请查看源文件。
 
 引用的区块内也可以使用其它的Markdown语法，包括标题、列表、代码区块等。
@@ -127,7 +124,7 @@ Markdown的区块引用类似于Email中的`>`引用方式。将所引用段落�
 
 Markdown支持无序列表和有序列表。
 
-无序列表使用*, + 或是- 作为列表标记：
+无序列表使用`*, +` 或是`-` 作为列表标记：
 
 * Babel
 * Sign No More
@@ -186,16 +183,16 @@ Markdown会同时用`<pre><code>`将代码区块包起来。
 
 这是另一个普通段落。
 
-_**注意**：Code(and Lists)标记(难道凡是区块标记,不论是Markdown里还是HTML里的?)要想在Markdown  
-文档里起作用，其前后必须用空行分隔，与前面“与HTML兼容”章节**注意**  
+_**注意**：Code(and Lists)标记(难道凡是区块标记,不论是Markdown里还是HTML里的?)要想在Markdown 
+文档里起作用，其前后必须用空行分隔，与前面“与HTML兼容”章节**注意** 
 所述内容相契合。_
 
 缩进用的4个空格只起标示作用，在转换成HTML后会被剥落，不起作用。
 
 一个代码区块会一直持续到没有缩进的那一行(或是文件结尾)。
 
-在代码区块里，&, <和>会自动转成HTML实体，方便在Markdown里插入HTML  
-语句。同理，代码区块里Markdown标记也不起作用，这意味着在Markdown里  
+在代码区块里，`&`, `<`和`>`会自动转成HTML实体，方便在Markdown里插入HTML
+语句。同理，代码区块里Markdown标记也不起作用，这意味着在Markdown里
 插入Markdown语法很方便。
 
 ### 分隔线 ###
@@ -223,7 +220,7 @@ Markdown支持两种形式的链接，内联式和引用式。
 
 参考式：
 
-	[Example][id]  
+	[Example][id]
 
 	[id]: http://www.example.com "Optional Title"
 
@@ -233,19 +230,21 @@ Markdown支持两种形式的链接，内联式和引用式。
 
 	[Example]: http://www.example.com "optional"
 
-效果：I get 10 times more traffic from [Google][] than from  
+效果：I get 10 times more traffic from [Google][] than from 
 [Baidu][1] and [Bing](http://www.bing.com "Bing Search")
 
 [Google]: http://www.google.com "Google Search"
-[1]: http://www.baidu.com "Baidu Search"  
+[1]: http://www.baidu.com "Baidu Search"
 (这些定义在转成HTML时将会被剥落。)
 
 ### 强调(Emphasis) ###
 
 *single asterisks*  
+
 _single underscores_
 
-**double asterisks**  
+**double asterisks**   
+
 __double underscores__
 
 or like this: Mumford **&** Sons.
@@ -262,7 +261,7 @@ or like this: Mumford **&** Sons.
 
 Use the `printf()` function.
 
-如果要在代码区段内插入反引号，你可用多个反引号来开启和结束  
+如果要在代码区段内插入反引号，你可用多个反引号来开启和结束
 代码区段，比如：
 
 ``There is a literal backtick (`) here. ``
@@ -271,7 +270,7 @@ A single backtick in a code span: `` ` ``
 
 A backtick-delimited string in a code span: `` `foo` ``
 
-在代码区段内，<和&都会被自动转成HTML实体，这使得在Markdown  
+在代码区段内，<和&都会被自动转成HTML实体，这使得在Markdown
 文档中插入HTML原始码很容易。
 
 Please do not use any `<blink>` tags.
@@ -280,7 +279,7 @@ Please do not use any `<blink>` tags.
 
 ### 图片(Images) ###
 
-Markdown使用一种和链接很相似的语法来标记图片，同样分为  
+Markdown使用一种和链接很相似的语法来标记图片，同样分为
 内联式和引用式两种。
 
 内联式：
@@ -294,7 +293,7 @@ Markdown使用一种和链接很相似的语法来标记图片，同样分为
 
 	[id]: /path//to/img.jpg "Optional Title"
 
-目前为止，Markdown尚不能指定图片的宽高，如果需要可以使用  
+目前为止，Markdown尚不能指定图片的宽高，如果需要可以使用
 HTML的`<img>`标签。
 
 其它(Miscellaneous)
@@ -310,6 +309,6 @@ HTML的`<img>`标签。
 
 Markdown支持在一下这些字符的前面插入反斜杠来输入普通字符：
 
-`` \ ` * _ - + [] () # . ! ``
+`` \ ` * _ - + [] {}() # . ! ``
 
 -EOF-    2013/2/28
