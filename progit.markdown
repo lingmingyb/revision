@@ -491,7 +491,7 @@ commit快照。它会自动添加、删除和修改文件以确保目录的内�
 								 |
 							(new_feature)
 
-不要担心hotfix的内容还没包含在new_feature中。如果确实需要纳入此次修补，可以用
+不要担心hotfix的内容还没包含在`new_feature`中。如果确实需要纳入此次修补，可以用
 `git merge master`把`master`分支合并到`new_feature`，或者等完成后，将`new_feature`
 分支中的更新并入`master`。
 					 

@@ -12,9 +12,8 @@
 
 ### 元字符 ###
 
-有两种常见的元字符，shell元字符和正则表达式元字符。  
-shell元字符由shell解释，正则表达式元字符由各执行模式  
-匹配操作的程序解释。两种元字符的意义不一样。
+有两种常见的元字符，shell元字符和正则表达式元字符。shell元字符由shell解释，
+正则表达式元字符由各执行模式匹配操作的程序解释。两种元字符的意义不一样。
 
 ### 基本元字符(BRE) ###
 
@@ -77,9 +76,9 @@ In a bracket expression,
 
 ### Miscellaneous ###
 
-In the event that an RE could match more than on substring of a given   
-string, the RE matches the one starting earliest in the string;  
-if the RE could match more that one substring starting at the same point,  
-it matches the longest.
+In the event that an RE could match more than on substring of a given 
+string, the RE matches the one starting earliest in the string; if the RE 
+could match more that one substring starting at the same point, it matches 
+the longest.
 
 -EOF-         2013/2/28
