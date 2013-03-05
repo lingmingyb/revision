@@ -10,22 +10,22 @@ Markdown的目标是成为一种好用的适用于网络的**书写**语言。
 
 ### 与HTML兼容 ###
 
-Markdown不是要取代HTML，甚至连接近都算不上，它的语法种类很少，  
-只对应HTML的一部分。虽然Markdown经过处理后是要变成HTML文档，  
-但Markdown的构想不是使HTML容易书写，HTML已经很容易书写了。  
-Markdown的理念是能够让文档更容易读、写和修改。HTML是一种*发布*  
+Markdown不是要取代HTML，甚至连接近都算不上，它的语法种类很少，
+只对应HTML的一部分。虽然Markdown经过处理后是要变成HTML文档，
+但Markdown的构想不是使HTML容易书写，HTML已经很容易书写了。
+Markdown的理念是能够让文档更容易读、写和修改。HTML是一种*发布*
 格式，而Markdown是一种*书写*格式。
 
-因此，Markdown的格式语法只涵盖纯文本处理的范围。不在Markdown  
-涵盖范围内的标签，都可以直接在文档里用HTML书写，不需要加注  
+因此，Markdown的格式语法只涵盖纯文本处理的范围。不在Markdown
+涵盖范围内的标签，都可以直接在文档里用HTML书写，不需要加注
 这是HTML还是Markdown, 直接用这些标签就可以了。
 
 在Markdown文本内使用HTML标签需要**注意**：  
 
-+   _应用HTML某些区块标签(block-level elements)，比如`<div>, <table>`  
-    等标签时，必须在前后加上空行与其他内容隔开_，还要求他们的  
++   _应用HTML某些区块标签(block-level elements)，比如`<div>, <table>`
+    等标签时，必须在前后加上空行与其他内容隔开_，还要求他们的
 	开始标签与结尾标签不能用制表符或空格缩进。
-+   HTML区块标签内的Markdown语法将不会被处理。  
++   HTML区块标签内的Markdown语法将不会被处理。
     举例如下(`*Foo*`不起作用):
 
     这是一个普通段落。
@@ -38,17 +38,17 @@ Markdown的理念是能够让文档更容易读、写和修改。HTML是一种*�
 
     这是另一个普通段落。  
 
-+   HTML的区段(span-level elements)可以应用于Markdown文本的  
++   HTML的区段(span-level elements)可以应用于Markdown文本的
     任意部分。而且Markdown语法在HTML区段标签内是有效的。
 
 ### 特殊字符自动转换 ###
 
-在HTML中，有两个字符需要特殊处理，< 和 &, 如果要显示这两个字符  
+在HTML中，有两个字符需要特殊处理，< 和 &, 如果要显示这两个字符
 的原型，必须要使用实体形式(entities), 分别是`&lt;` 和 `&amp;`
 
-Markdown会自动处理<和&的显示。如果<或&与其后的字符构成具有特殊  
-意义的HTML标识(如`&amp; &lt; <href>`等)则不予变动;否则就将<和&当作HTML  
-实体而予以自动转换(变成`&amp;`等)。  
+Markdown会自动处理<和&的显示。如果<或&与其后的字符构成具有特殊
+意义的HTML标识(如`&amp; &lt; <href>`等)则不予变动;否则就将<和&当作HTML
+实体而予以自动转换(变成`&amp;`等)。
 
 比如：
 
@@ -58,9 +58,9 @@ Markdown会自动处理<和&的显示。如果<或&与其后的字符构成具�
 
 	4 &lt; 5
 
-**注意**:_Markdown code范围内，不论是区块还是区段(行内), <和&  
-两个符号一定都会被转换成HTML实体_，这项特性使得很容易用Markdown  
-写HTML code(如果在HTML文档中引用HTML code，需要将所有的<和&进行  
+**注意**:_Markdown code范围内，不论是区块还是区段(行内), <和&
+两个符号一定都会被转换成HTML实体_，这项特性使得很容易用Markdown
+写HTML code(如果在HTML文档中引用HTML code，需要将所有的<和&进行
 实体转换(_即code内所见即所得_)。
 
 区块元素(Block-level Elements)
@@ -68,10 +68,10 @@ Markdown会自动处理<和&的显示。如果<或&与其后的字符构成具�
 
 ###段落和换行(Paragraphs and Line Breaks)###
 
-一个Markdown段落是由一个或多个连续的文本*行*组成，它的前后要有一个  
+一个Markdown段落是由一个或多个连续的文本*行*组成，它的前后要有一个
 以上的空行。普通段落不要缩进。
 
-一个段落里的文本可以强制断为多行(hard-wrapped,相当于HTML里在上一行结尾  
+一个段落里的文本可以强制断为多行(hard-wrapped,相当于HTML里在上一行结尾
 处插上`<br />`), 方法是在插入处先按入两个以上的空格然后回车。
 
 ### 标题(Headers) ###
@@ -94,7 +94,7 @@ Markdown支持两种标题(Headers)的写法。
 
 ### 区块引用(BlockQuotes) ###
 
-Markdown的区块引用类似于Email中的`>`引用方式。将所引用段落手动断行  
+Markdown的区块引用类似于Email中的`>`引用方式。将所引用段落手动断行
 (hard-wrap)并且在每一行加上`>`效果最好。
 
 >这是一个测试。  
