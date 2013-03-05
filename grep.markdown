@@ -35,7 +35,7 @@ syntax ok.
 每个match都为单个字母。
 	
 	$ grep "[a-z]*" Regex.txt (-o)
-每个match多为连续的字母序列。  
+每个match多为连续的字母序列。
 这项差别如果不用-o选项竟然看不出来。
 
 -EOF- 2013/2/28
