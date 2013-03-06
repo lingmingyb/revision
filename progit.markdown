@@ -371,7 +371,7 @@ Git使用的标签有两种类型：轻量级的(lightweight)和含附注的(ann
 * commit对象 - 保存父`commit对象`索引，`tree对象`索引和提交信息元数据。
 
 假设暂存区有三个文件，那么提交后仓库里会多出5个对象(三个blob对象，一个tree对象和
-一个commit对象). 如果做些修改后再次提交，那么这次的`commit对象`里会包含一个指向
+一个commit对象). 如果做些修改后再次提交，那么这次的commit对象里会包含一个指向
 上次commit对象的指针。
 
 **Git分支**
@@ -406,8 +406,7 @@ Git保存着一个名为HEAD的特别指针，它指向那个分支指针，那�
 	$ git checkout master
 
 命令回到`master分支`，这条命令做了两件事。它把HEAD指针移回到`master`分支，并把
-工作目录中的文件换成了`master`分支所指向的快照内容。也就是说，现在开始所做的改动，
-将始于本项目中一个较老的版本。
+工作目录中的文件换成了`master`分支所指向的快照内容。
 
 我们可以在不同分支里来回切换，各自开发，所做的改变都孤立在各自的分支里，可以在
 时机成熟的时候将这些改变合并到一起。
@@ -672,17 +671,22 @@ heads/serverfix`，意味取出我的`serverfix`本地分支，推送它来更�
 接下来，当你的协作者再次从服务器上获取数据时，他们将得到一个新的远程分支`origin/
 serverfix`.
 
-_(?)值得注意的是，在fetch操作(按：不是**clone**)抓来`serverfix`远程分支之后，你仍然
-无法在本地编辑该远程仓库。换句话说，在本例中，你不会有一个新的`serverfix`分支，有的
-只是一个你无法移动的`origin/serverfix`指针。_
+	$ git fetch orgin
 
-_(?)如果要把该内容合并到当前分支(既然只是一个远程分支指针，不含分支，哪里来的内容？
-现从服务器上抓？)，可以运行:_
+> ...
+> From git@github.com:kdlijian/...
+>  [new branch]		serverfix  ->  origin/serverfix
+
+值得注意的是，在`fetch`操作(按：不是`clone`)抓来某些远程分支之后，你得不到相应的
+可编辑的本地分支。比如，在本例中，你的合作者`fetch`到了一个新远程分支`serverfix`，
+他们并不会得到一个本地分支`serverfix`，有的只是一个无法移动的`original/serverfix`
+分支指针。
+
+如果要把该内容合并到当前分支，可以运行:
 
 	$ git merge origin/serverfix
 
-_(?)如果想要一份自己的`serverfix`来开发(本地不是已经有了吗？就是刚刚推送到远程仓库
-的那个?)，可以在远程分支的基础上分化出一个新的分支来：_
+如果他们想要一份自己的`serverfix`来开发，可以在远程分支的基础上分化出一个新的分支来：
 
 	$ git checkout -b serverfix origin/serverfix
 
