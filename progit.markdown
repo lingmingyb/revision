@@ -917,7 +917,265 @@ Git使用四种主要的协议来传输数据：本地传输，SSH协议，Git�
 ----------------
 
 ### 5.1 分布式工作流程 ###
+### 5.2 为项目做贡献 ###
 
-**集中式工作流**
+**私有的小型团队**
+
+工作流(按事件发生顺序)：
+
+1. John克隆了仓库(A)，做了些更新，在本地提交(B)。
+		
+		$ git clone git@github.com:sample.git
+
+2. Jessica，同样克隆了仓库(A)，在本地提交更新(C)。
+
+		$ git clone git@github.com:sample.git
+
+3. Jessica将她的工作推送到服务器上。
+
+		$ git push origin master
+
+4. John也尝试这么做，但被驳回。他不得不把Jessica的更新拉下来，并与自己
+   的`master`分支合并(D)。
+
+		$ git fetch orgin
+		$ git merge orgin/master
+
+5. John将合并结果(D)推送到服务器上。
+
+		$ git push origin master
+
+6. Jessica此时已创建特性分支`issue54`并已在其上提交了三次更新(E),(F),(G).
+
+		$ git checkout -b issue54 
+
+7. Jessica与服务器同步，她的本地仓库历史多出了John的两次提交(B)和(D), 
+   她想看看这两次提交是什么。
+
+   		$ git fetch orgin
+		$ git log --no-merges origin/master ^issue54
+
+8. Jessica将特性分支`issue54`合并到`master`分支。
+
+		$ git checkout master
+		$ git merge issue54
+
+9. Jessica将`origin/master`合并到自己的`master`分支。
+
+		$ git merge origin/master
+
+10. Jessica将自己的`master`分支推送到服务器上。
+
+		$ git push origin master
+		
+John的提交历史如下：
+
+	 1.o/m   5.o/m
+	   |       |
+	---A---B---D (master)
+	    \     /
+		 C---*
+		 |
+	   3.o/m
+		 
+
+Jessica的提交历史如下：
+
+				  issue54  10.o/m
+					   |   |
+	---A---C---E---F---G---H (master)
+	    \   \		      /
+		 B---D-----------*
+
+注：第8和第9步，谁先谁后都没有关系，最终合并后的内容快照是一样的，而仅仅
+是提交历史看起来会有些先后差别。
+
+**私有团队间协作**
+
+集成管理员工作流(Intergration Manager Workflow):
+
+几个小组分头负责若干特性的开发，每个组有一位管理员负责集成本组代码，及更新
+项目组仓库的`master`分支。所有开发在都在代表小组的分支上进行。
+
+假设John和Jessica一起负责开发某项特性A，同时Jessica和Josie负责开发另一项
+功能B。
+
+Jessica的工作流程如下：
+
+1. 克隆生成本地仓库后(A), 创建分支`featureA`以开发特性A。
+
+		$ git checkout -b featureA
+
+2. 提交更新(B)，因为Jessica没有权限推送数据到仓库的`master`分支(只有集成管理
+员有此权限)，所以只能将`featureA`分支推送至服务器，并邮件告知John取用。
+
+		$ git push origin featureA
+
+3. 等待John来信过程中以`origin/master`为基础创建`featureB`分支以开发特性B
+(注：与`featureA`分支同基础)，并在其上提交了若干更新(E,F)。
+
+		$ git fetch origin
+		$ git checkout -b featureB origin/master
+
+4. Jessica正准备推送`featureB`分支到服务器上，Josie来信说已将自己的工作推送到
+服务器上的`featureBee`分支了(G)。于是Jessica下载Josie的代码，合并到自己的分支中，
+然后推送到`featureBee`分支上(H)。
+
+		$ git fetch origin
+		$ git merge origin/featureBee
+		$ git push origin featureB:featureBee
+
+5. John来信告知说他已往`featureA`上推送了另一个更新(C)，Jessica将其下载，查看
+了所做修改以后合并到本地`featureA`分支，再此基础上做了些修改，又推回到服务器上(D)。
+
+		$ git fetch orgin
+		$ git log origin/featureA ^featureA
+		$ git checkout featureA
+		$ git merge origin/featureA
+		$ git push origin featureA
+
+6. 最后集成管理员将`featureA`和`featureBee`分支并入`master`(I)。
+
+提交历史如下：
+
+	   			 o/fA
+				   |
+	   m		  fA   o/m
+	   |		   |	|
+	---A---B---C---D----I
+	   |\			   /
+	    \*--E---F--H--*
+	     \		  /|
+		  G------* |
+		  		  fB
+				   |
+				 o/fBee
 
 
+**公开的小型项目**
+
+上面说的是私有项目合作，但要给公开项目作贡献，情况就有些不同了。因为你没有更新
+主仓库分支的权限，得寻求其它方式把工作成果交给项目维护人。有两种方法，一种是使
+用Git托管服务商提供的仓库复制(fork)功能，另一种是通过电子邮件寄送文件补丁。
+
+但不管哪种方式，一开始做的总是这些工作：
+
+	$ git clone [url]
+	$ cd [projec]
+	$ git checkout -b featureA
+	$ (work)
+	$ git commit
+	...
+
+完成特性分支`feature`以后，提交给项目维护者之前，先到原始项目的页面上点击`fork`，
+创建一个自己可写的公共仓库，然后把它加为本地的第二个远端仓库。
+
+	$ git add myfork [url]
+
+这个时候，我们直接把`featureA`分支整个推送到该远程仓库：
+
+	$ git push myfork featureA
+
+然后通知项目管理员，来抓取你的代码，这个过程叫做`Pull Request`.
+
+	$ git pull-request origin/master myfork
+
+`git pull-request`命令接受两个参数，第一个参数`origin/master`是本地特征分支开始
+前的原始分支，第二个参数`myfork`是请求对方来抓取的Git仓库地址。
+
+输出的内容可以直接邮件发给邮件管理者，他们就会明白这是从哪次提交开始旁支出去的，
+该到哪里去抓取新的代码，以及新的代码增加了哪些功能等等。或者直接用Github等提供的
+`pull-request`功能自动发出请求通知。
+
+像这样随时保持自己的`master`分支和官方`origin/master`同步，并将自己的工作限制在
+特性分支上的做法，既方便又灵活，采纳和丢弃都轻而易举。就算原始主干发生变化，我们
+也能重新衍合提供新的补丁。
+
+如果现在要开始第二个特性的开发，不要在原来已推送的特性分支上继续，还是按原始`master`
+开始：
+
+	$ git checkout -b featureB origin/master
+	$ (work)
+	$ git commit
+	...
+	$ git push myfork featureB
+	$ git pull request...
+	
+现在从原始仓库拉取更新:
+
+	$ git fetch origin
+
+这时提交历史是这样的：
+
+		   m  o/m 
+		   |   |
+	---A---B---C    fA
+		   |\		|
+		   | D------E 
+		    \
+			 F 
+		   	 |
+			fB
+
+1. 假设项目管理员接纳了许多别人提交的补丁之后，准备要采纳你提交的第一个分支，却
+发现因为代码基准不一样(`origin/master`已经前移了)，合并工作无法干净地完成。这就
+需要把提交历史衍合到最新的`origin/master`上，然后重新推送分支`featureA`:
+
+	$ git checkout featureA
+	$ git rebase origin/master
+
+	$ git push -f myfork featureA
+
+该`-f`选项将替换掉远程已有的`featureA`分支，因为新的commit并非原来commit的后续
+更新。当然也可以直接推送到另一个新的分支上去，比如`featureAv2`.
+
+2. 管理员看过第二个分支后觉得思路新颖，但想请你改下具体实现。我们只需已当前
+`origin/master`分支为基准，开始一个新的特性分支`featureBv2`，然后把原来的`featureB`
+更新用于其上(squash, 压制)。
+
+	$ git checkout -b featureBv2 origin/master
+	$ git merge --no-commit --squash featureB
+	$ (reimplement)
+	$ git commit
+	$ git push myfork featureBv2
+
+这里的`--squash`选项将目标分支里的所有更改拿来用在当前分支伤，而`--no-commit`选项
+告诉Git不要自动提交生成和记录(merge)提交。
+
+这时的提交历史：
+
+		   m  o/m
+		   |   |
+	---A---B---C   	 fA
+	       |   |\    |
+		   |   | D'--E'
+			\	\ 
+			 F   G
+			 |   |
+			fB   fBv2
+
+
+**公开的大型项目**
+
+许多大型项目都会立有一套自己的接受补丁流程，你应该注意一下其中细节。但多数项目都
+允许通过开发者邮件列表接受补丁。
+
+工作流程：
+
+	$ git clone [url]
+	$ git checkout -b topicA
+	$ (work)
+	$ git commit
+	$ (work)
+	$ git commit
+
+如此一番后，有两个提交需要发送到邮件列表。我们可以用`git format-patch`命令来生成
+`mbox`格式的文件然后作为附件发送。每个提交都会封装成一个`.patch`后缀的`mbox`文件。
+
+	$ git format-patch -M origin/master
+
+`-M`选项允许Git检查是否有对文件重命名的提交。
+
+可以用邮件客户端发送这些补丁文件，也可以直接在命令行发送[略]。
+
+### 5.3 项目的管理 ###
