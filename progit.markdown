@@ -1179,3 +1179,169 @@ Jessica的工作流程如下：
 可以用邮件客户端发送这些补丁文件，也可以直接在命令行发送[略]。
 
 ### 5.3 项目的管理 ###
+
+**使用特性分支进行工作**
+
+管理远程仓库，如果想要集成新的代码进来，最好局限在特性分支上做。等测试完毕后，再
+决定是否要并入主干分支。现在从当前主干分支为基础，新建临时分支：
+
+	$ git branch sc/ruby_client master
+或
+	
+	$ git checkout -b sc/ruby_client master
+
+**采纳来自邮件的补丁**
+
+使用`git apply`命令应用补丁：
+
+如果收到的补丁是用`git diff`或由其它Unix的`diff`命令生成，就应该用`git apply`命令
+应用补丁。
+
+	$ git apply /tmp/patch-ruby-client.patch
+
+这会修改当前的工作目录，效果基本与运行`patch -p1`打补丁一样，但它更为严格，且不会
+出现混乱。如果是`git diff`格式描述的补丁，此命令还会相应地添加，删除，重命名文件。
+当然，普通的`patch`命令是不会这么做的。另外，`git apply`是一个事物性的操作的命令，
+也就是说，要不所有补丁都打上去，要不全部放弃。因为是仅仅更新当前文件，所以此命令
+不会自动生成提交对象，你得手动暂存相应文件的更新状态并执行提交命令。
+
+在实际打补丁之前，可以检查补丁是否能够干净顺利地应用到当前分支中：
+
+	$ git apply --check 0001-this-patch-was-generated-by-git-format-patch.patch
+
+如果无输出表示可以顺利采纳，否则除了报告错误之外，还会返回一个非零的状态，所以可以
+用于在shell脚本里检测状态。
+
+使用`git am`命令应用补丁：
+
+对于`git format-patch`命令制作的新式补丁，应当使用`git am`命令。技术上说，`git am`
+能够读取`mbox`格式的文件。
+
+	$ git am 0001-this-patch-was-generated-by-git-formate-patch.patch
+
+它会被干净地应用到本地分支，并且自动创建了新的提交对象(包含作者、提交、日期等信息)。
+
+有时候也会遇到打不上补丁的情况，比如你的主干分支与别人生成补丁时所用的主干分支相差
+太远或者某些依赖补丁还未应用。
+
+这时候可以手动修复有冲突的文件，暂存起来，然后再应用：
+
+	$ git am --resolved
+
+或者 
+
+	$ git am --aborted
+
+	$ git am --skip
+
+如果想让Git更智能地处理冲突，可以使用`-3`选项进行三方合并。如果当前分支未该补丁的
+基础代码或其祖先，那么三方合并就会失败，所以该选项默认为关闭状态。一般来说，如果
+该补丁是基于某个公开的提交制作而成的话，你总可以通过同步来获取这个共同祖先，所以用
+三方合并选项可以解决很多麻烦：
+
+	$ git am -3 0001-seeing-if-this-helps-the-gem.patch
+
+如果你的邮件客户端能将多封电邮导出为`mbox`格式的文件，就可以用`git am`一次性应用
+所有导出的补丁，这时可以用`git am`命令的交互模式选项`-i`，这样就会在打每个补丁前
+停住，询问该如何操作：
+
+	$ git am -3 -i mbox
+
+打完所有补丁后，如果测试下来新特性可以正常工作，那就可以安心地将当前特性分支合并到
+长期分支中去了。
+
+**检出远程分支**
+
+如果贡献者有自己的远程仓库，并将修改推送到此仓库中，那么当你拿到仓库的远程地址和
+分支名称后，就可以加为远程分支，然后在本地合并。
+
+	$ git remote add jessica git@github.com/jessica/myproject.git
+	$ git fetch jessica
+	$ git checkout -b rubyclient jessica/rubyclient
+
+使用远程分支一个最大的好处就是能够得到提交历史。不管代码合并是不是会有问题，至少我
+们知道该分支的历史分叉点(_how?_)，所以默认会从共同祖先开始自动进行进行三方合并，无
+需`-3`选项，也不用像打补丁那样祈祷存在共同的基准点。
+
+如果只是临时合作，只需用`git pull`命令抓取远程仓库上的数据，合并到本地临时分支就
+可以了。一次性的抓取操作自然不会该仓库地址加为远程仓库。
+
+	$ git checkout -b temp_branch
+	$ git pull git@github.com/jessica/myproject.git
+	
+**决断代码取舍**
+
+现在特性分支上已经合并好了贡献者的代码，现在要查看该特性分支上都有哪些新增的提交。
+比如在`contrib`特性分支上打了两个补丁，仅查看这两个补丁的提交信息：
+
+	$ git log contrib --not master
+
+加上`-p`选项将展示每次提交的内容差异。
+
+如果要查看当前所在的特性分支同将要承接合并的另一分支(`master`)的完整内容差异，可以：
+
+	$ git diff master
+
+不过一旦主干`master`在特性分支创建后有所修改，那么通过该命令来比较的，是最新主干上
+的提交快照。所以我们可以手工定位他们的共同祖先，然后与之比较：
+
+	$ git merge-base contrib master
+> 36c7dsudgi9289agosidogu8s....
+
+	$ git diff 36c7ds
+
+这么做稍显麻烦。Git提供了简便的`...`语法达成这一目的。
+
+	$ git diff master...contrib
+
+现在看到的，就是实际要引入的新代码。这一命令特别有用。
+
+**衍合与挑拣(cherry-pick)**
+
+衍合或者捡选贡献者的代码，而不是简单的合并，就能够保持线状的提交历史。
+
+除了合并和衍合，另一个引入代码的方法是“挑拣”。挑拣类似于针对某次提交的衍合。它首先
+提取某次提交的补丁，然后应用在当前分支上。如果某个特性分支有多个commits，而你只想
+引入其中一个就用这个办法。
+
+	A--B--C (master)
+	    \
+		 D--E (featureA)
+
+如果只想把`提交D`衍合到`master`分支上，可以这样：
+
+	$ git cherry-pick D.SHA-1
+
+这会引入`提交D`的代码，但是会得到不同的SHA-1值，因为应用日期不同。现在提交历史看起
+来是这样的：
+
+	A--B--C--D' (master)
+
+**给发行版签名**
+
+	$ git tag -s v1.0 -m 'my signed 1.0 
+
+**生成内部版本号(Build Number)**
+
+	$ git describe master
+
+**准备发布**
+
+	$ git archive master --prefix='project/' | gzip > `git describe master`.tar.gz
+
+或者
+
+	$ git archive master --prefex='project/' --format=zip > `git describe master`.zip
+
+**制作简报**
+
+	$ git shortlog --no-merges master --not v1.0.1
+
+该命令将显示自上次发布后所有提交的简介。
+
+
+第6章：Git工具
+--------------
+
+
+
