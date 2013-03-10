@@ -1139,7 +1139,7 @@ Jessica的工作流程如下：
 	$ git commit
 	$ git push myfork featureBv2
 
-这里的`--squash`选项将目标分支里的所有更改拿来用在当前分支伤，而`--no-commit`选项
+这里的`--squash`选项将目标分支里的所有更改拿来用在当前分支上，而`--no-commit`选项
 告诉Git不要自动提交生成和记录(merge)提交。
 
 这时的提交历史：
@@ -1343,5 +1343,348 @@ Jessica的工作流程如下：
 第6章：Git工具
 --------------
 
+### 6.1 修订版本(Revision)选择 ###
+
+Git允许通过几种方法来指明特定的或者一定范围内的commits.
+
+**单个修订版本**
+
+	$ git show SHA-1
+	$ git show Short_SHA-1
+
+**分支引用**
+
+显示一个分支的最后一次提交的对象：
+
+	$ git show topic1
+
+显示某个分支指向哪个特定的SHA-1，或者查看一个被简写的SHA-1：
+
+	$ git rev-parse topic1
+	
+	$ git rev-parse d518840
+
+**引用日志(RefLog)里的简称**
+
+	$ git perflog
+
+	$ git show HEAD@{5}
+
+	$ git show master@{yesterday}
+
+**祖先引用**
+
+	$ git show d518840^		#该提交的父提交
+
+	$ git show HEAD^		#HEAD的父提交
+
+	$ git show d518840^2 	#该提交的第二父提交(限合并提交时)，第一父提交是
+							#合并时所在分支，第二父提交是被并入的分支
+
+	$ git show d518840~		#该提交的第一父提交
+
+	$ git show d518840~3	#该[合并]提交在原所在分支的父父父提交。
+
+	$ git show d518840^^^ 	#同上
+
+**提交范围(Commit Ranges)**
+
++	双点：
+
+	这种语法主要让Git区分可从一个分支中获得而不能从另一个分支中获得的提交。
+
+	要查看你的`experiment`分支上哪些没有被提交到`master`分支，即“所有可从`experiment`
+	分支获得而不能从`master`分支中获得的提交”：
+
+		$ git log master..experiment
+
+	也可以反过来使用：
+
+		$ git log experiment..master
+		
+	查看你将把什么推送到远程，即显示在你当前分支上而不再远程`origin/master`上的提交：
+
+		$ git log origin/master..HEAD
+
+		$ git log origin/master..			#HEAD可以省略
+
++ 	多点：
+
+	用于查看哪些提交被包含在某些分支，但不在另一些分支中(可以指定多于两个分支):
+
+		$ git log refA..refB
+		$ git log ^refA refB
+		$ git log refB --not refA		#以上三个命令等同
+
+	查看所有被`refA`和`refB`包含的但不被`refC`包含的提交：
+
+		$ git log refA refB ^refC
+		$ git log refA refB --not refC
+
++	三点：
+
+	查看被两个引用中的一个包含但不被两者同时包含的提交：
+
+		$ git log master...experiment
+
+	一个常用参数，用于显示每个提交到底处于哪一侧的提交：
+
+		$ git log --left-right master...experiment
+
+
+### 6.2 交互式暂存 ###
+
+Git提供了许多脚本用于辅助命令行任务。这里，你将看到一些交互式命令，他们帮助你方便地
+构建只包含特定组合和特定文件的提交。在你修改了一大批文件然后决定将这些变更分布在几个
+各有侧重的提交而不是一个又大又乱的提交时，这些工具非常有用。用这种方法，你可以确保
+你的提交在逻辑上划分为相应的变更集，以便于供和你一起工作的开发者审阅。
+
+	$ git add -i
+
+
+### 6.3 储藏(Stashing) ###
+
+在工作目录修改和暂存了一些文件，还没准备好提交，但是需要紧急切换到另一个分支上工作的
+时候，可以使用将这些变更“储藏”起来，以得到一个干净的工作目录，还可以重新应用这些变更。
+
+	$ git stash
+
+	$ git stash list
+
+	$ git stash apply@1
+	$ git stash apply --index		#恢复原来的暂存状态
+
+	$ git stash drop
+	$ git stash pop
+
+	$ git stash branch
+
+### 6.4 重写历史 ###
+
+很多时候，你也许会由于某种原因想要修改你的提交历史。Git的一个卓越之处就是它允许你在
+最后可能时候再做决定。你可以在你即将提交暂存区时决定什么文件归入哪一次提交，可以使用
+`stash`命令暂时搁置当前的工作，也可以重写已经发生的提交以使他们看起来是另一个样子。
+这个包括改变提交顺序，提交说明或者修改提交中包含的文件，将提交归并、拆分或者完全删除
+——这一切在你尚未将你的工作和别人共享前都是可以的。
+
+**修改最近一次提交**
+
+修改提交说明：
+
+	$ git commit --amend
+
+更改上次提交的快照内容：
+
+	$ git add <>
+	$ git rm <>
+	$ git commit --amend
+
+使用这项技术的时候要小心，因为修正会改变提交的SHA-1值。这个很像是一次非常小的`rebase`，
+所以不要在最近一次提交被推送后再去修改它。
+
+**修改多个提交**
+
+要修改历史中更早的提交，你必须采用更复杂的工具。Git没有一个修改历史的工具，(?)但是你
+可以使用`rebase`工具来衍合一系列的提交到它们原来所在的`HEAD`而不是移到新的上。
+
+假如想要修改最近的三次提交，必须要指明想要修改的提交的父提交：
+
+	$ git rebase -i HEAD~3
+
+再次提醒这是一个衍合命令——`HEAD~3..HEAD`范围内的每一次提交(共三个)都会被重写，无论你
+是否修改说明。不要涵盖你已经推送到共享服务器的提交，这么做会使其他开发者产生混乱，因为
+你提供了同样变更的不同版本。
+
+运行这个命令会为你的文本编辑器提供一个可编辑的提交列表(`.git/rebase-merge`), 看起来如下：
+
+	pick f7f3f6d changed my name a bit
+	pick 310154e updated README formating and added blame
+	pick a5f4a0d added cat-file
+
+	# Rebase 710f0f8..a5f4a0d onto 710f0f8
+	#
+	# Commands:
+	# p, pick = ...
+	# e, edit = ...
+	# ...
+	# If you remove a line here THAT COMMIT WILL BE LOST.
+	# ...
+
+很重要的一点是你得注意这些提交的顺序与你通常通过`git log`命令看到的是相反的。
+
++	修改多个提交说明(or `reword`?)
+	
+	在vi里将脚本编辑成：
+
+		edit f7f3f6d changed my name a bit
+		pick 310154e updated README formating and added blame
+		pick a5f4a0d added cat-file		
+
+		$ git commit --amend
+		
+		$ git rebase --continue
+
++	重排提交
+
+	可以将原来的提交改成这个样子：
+
+		pick a5f4a0d added cat-file
+		pick 310154e updated README formating and added blame
+		
++	压制(Squashing)提交
+
+    将一系列提交压制为单一提交。将脚本编辑成下面这样：
+
+		pick f7f3f6d changed my name a bit
+		squash 310154e updated README formating and added blame
+		squash a5f4a0d added cat-file
+
++	拆分提交
+
+	拆分提交就是撤销一次提交，然后多次部分的暂存或提交直到结束。下例将中间的
+	那次提交"updated README formating and added blame"拆分成两次提交：第一次
+	为"updated README formating", 第二次为"added blame".
+
+	编辑脚本：
+
+		pick f7f3f6d changed my name a bit
+		edit 310154e updated README formating and added blame
+		pick a5f4a0d added cat-file
+
+	当你保存编辑器，Git倒回到列表中第一次提交的父提交，应用第一次提交(f7f3f6d),
+	应用第二次提交(310154e), 然后将你带回控制台。这时你可以对那次提交进行一次
+	混合的重置，这将撤销那次提交并将修改的文件撤回。此时你可以暂存并提交文件，
+	直到你拥有多次提交，结束后，运行`git rebase --continue`.
+
+		$ git reset HEAD^
+		$ git add README
+		$ git commit -m 'updated README formatting"
+		$ git add lib/simplegit.rb
+		$ git commit -m 'added blame'
+		$ git rebase --continue
+
+	然后Git在脚本中应用了最后一次提交(a5f4a0d), 你的提交历史变成这样了：
+
+		$ git log -4 --pretty=format:"%h %s"
+
+		1c002dd added cat-file
+		9b29157 added blame
+		8s823j3 updated README formatting
+		932kf32 changed my name a bit
+
+	可以看到，这修改了列表中提交的SHA-1值，所以这样做之前应该确保这个列表里不
+	包含你已经推送到共享仓库里的提交。
+
+
+**核弹级选项：filter-branch**
+
+如果你想用脚本的方式修改大量的提交，还有一个重写历史的选项可用——例如，全局性地
+修改电子邮件地址或者将一个文件从所有文件中删除。这个命令是`filter-branch`, 这个
+命令会大面积的修改你的历史，所以你很有可能不去用它，除非你的项目尚未公开，没有
+其他人在你准备修改的提交的基础上工作。
+
+更保险一点，在一个测试分支上做这些然后在你确定产物真的是你想要的之后，再`hard-reset`
+你的主分支。
+
+从所有提交中删除一个文件：
+
+	$ git filter-branch --tree-filter 'rm -f passwd.txt' HEAD
+
+	$ git filter-branch --tree-filter 'rm -f *.swp' HEAD
+
+`--tree-filter`选项会在每次检出项目时先执行指定的命令然后重新提交结果。要在所有
+分支上运行`filter-branch`的话可以加上`--all`选项。
+
+将一个子目录设置为新的跟目录：
+
+	$ git filter-branch --subdirectory-filter sub_dir HEAD
+
+全局性地更换电子邮件地址：
+
+	$ git filter-branch --commit-filter '
+		if [ "$GIT_AUTHOR_EMAIL" = "mellon@collie" ];
+		then
+			GIT_AUTHOR_NAME="mellon";
+			GIT_AUTHOR_EMAIL="mellon@example.com";
+			git commit-tree "$@";
+ 		else
+			git commit-tree "$@";
+		fi' HEAD
+
+这会遍历并重写所有提交使之拥有你的新地址。因为提交里包含了它们的父提交的SHA-1值，
+这个命令会修改你的历史中的所有提交，而不仅仅是包含了匹配了电子邮件地址的哪些。
+
+
+### 6.5 使用Git调试 ###
+
+**文件标注**
+
+如果你在追踪代码中的缺陷想直到这是什么时候为什么被引进来，文件标注将会是最佳工具。
+它会显示文件中对每一行进行修改的最近一次提交。
+
+	$ git blame -L 900,910 progit.markdown
+
+如果加上`-C`选项，还可以看到代码段的原始出处：
+
+	$ git blame -C -L 900,910 progit.markdown
+
+
+**二分查找**
+
+标注文件在你知道问题是哪里引入的时候会有帮助。如果你不知道，并且上次代码可用的
+状态已经经历了上百次提交，你可能就要求助于`bisect`明了了。`bisect`会在你的提交
+历史中进行二分查找来尽快地确定哪一次提交引入了错误。
+
+	$ git bisect start
+	$ git bisect bad [HEAD]
+	$ git bisect good v1.0
+
+事实上，如果你有一个脚本在工程正常时返回0, 不正常时返回非0的话，可以完全自动地
+执行`git bisect`. 
+
+	$ git bisect start HEAD v1.0
+	$ git bisect run test-error.sh
+
+这样会自动地在每一个检出的提交里运行这个脚本直到Git找到第一个破损的提交。你也可以
+运行`make`或`make test`等来为你执行自动化测试。
+
+
+### 6.6 子模块 ###
+
+经常有这样的事，当你在一个项目上工作时，你需要在其中使用另一个项目。也许它是一个
+第三方开发的库或者是你自己独立开发并在多个父项目中使用的。你想将两个项目单独处理
+但又需要在其中一个使用另外一个。
+
+如果采用包含库的方法，那么不管用什么方法都很难去定制这个库，部署就更加困难了，因
+为你必须确保每个客户都拥有这个库。把代码拷贝到自己的项目中带来的问题是，当上游被
+修改时，任何你进行的定制化的修改都很难归并。
+
+Git通过子模块处理这个问题。子模块允许你将一个Git仓库当作另一个Git仓库的子目录。
+这允许你克隆另外一个仓库到你的项目中并保持你的提交相对独立。
+
+**子模块初步**
+
+假设你想把Rack库(一个Ruby的web服务器网关接口)加入到你的项目中，可能又要保持自己
+的变更，又要延续上游的变更。首先你把外部的仓库克隆到你的子目录中，然后将外部项目
+加为子模块：
+
+	$ cd project/
+	$ git submodule add git://github.com/somebody/rack.git rack
+
+现在就在项目里的`rack`目录里有了一个`rack`项目。你可以进入那个目录，进行变更，
+加入你自己的远程可写仓库来推送你的变更，从原始仓库拉取和归并等等。
+
+此时运行`git status`会发现有`new file: .gitmodules`和`new file: rack`.
+
+`.gitmodules`是一个配置文件，保存了项目URL和你拉取到的本地子目录。很重要的一点是
+这个文件跟其他文件一样也是处于版本控制之下的，就像你的`.gitignore`文件一样，它跟
+项目里的其他文件一样可以被推送和拉取。这是其他克隆此项目的人获知子模块项目来源的
+途径。
+
+...
+
+
+第7章：自定义Git
+----------------
 
 
