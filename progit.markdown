@@ -1498,7 +1498,7 @@ Git提供了许多脚本用于辅助命令行任务。这里，你将看到一�
 运行这个命令会为你的文本编辑器提供一个可编辑的提交列表(`.git/rebase-merge`), 看起来如下：
 
 	pick f7f3f6d changed my name a bit
-	pick 310154e updated README formating and added blame
+	pick 310154e updated README formatting and added blame
 	pick a5f4a0d added cat-file
 
 	# Rebase 710f0f8..a5f4a0d onto 710f0f8
@@ -1517,7 +1517,7 @@ Git提供了许多脚本用于辅助命令行任务。这里，你将看到一�
 	在vi里将脚本编辑成：
 
 		edit f7f3f6d changed my name a bit
-		pick 310154e updated README formating and added blame
+		pick 310154e updated README formatting and added blame
 		pick a5f4a0d added cat-file		
 
 		$ git commit --amend

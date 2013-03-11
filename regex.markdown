@@ -40,7 +40,7 @@
 + `x\{m\}`	
 + `x\{m,\}` They are Bounds.
 + `x\{m,n\}`
-+ `\()\`	back references, avoid using them( via `man 7 regex`)
++ `\()\`	back references, avoid using them (via `man 7 regex`)
 
 ### 更多元字符 ###
 
