@@ -200,3 +200,11 @@ shell变量可分两类：局部变量和环境变量。
 
 	$ unset array
 
+
+Bash shell编程
+--------------
+
+一个bash shell程序由一组UNIX/Linux命令、bash shell命令、程序结构控制语句和注释
+组成。
+
+
